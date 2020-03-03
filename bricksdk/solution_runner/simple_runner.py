@@ -40,15 +40,28 @@ class SimpleRunner(BaseRunner):
         self.state = None
 
     def _execute_brick(self, dependency_graph, brick_name, dependencies, force_rerun=False):
-        print("Executing brick : {}".format(brick_name))
-        for dependency in dependencies:
-            return self.state[brick_name].execute(
-                proto=self._execute_brick(dependency_graph=dependency_graph, brick_name=dependency,
-                                          dependencies=self.dependency_graph[dependency],
-                                          force_rerun=force_rerun),
-                force_rerun=force_rerun
-            )
-        return self.state[brick_name].execute(force_rerun=force_rerun)
+        results = []
+        if len(dependencies) > 1:
+            for index, dependency in enumerate(dependencies):
+                result = self.state[brick_name].execute(
+                    proto=self._execute_brick(dependency_graph=dependency_graph, brick_name=dependency,
+                                              dependencies=self.dependency_graph[dependency],
+                                              force_rerun=force_rerun),
+                    force_rerun=force_rerun
+                )
+                results.append(result)
+                if index < len(dependencies) - 1:
+                    continue
+                return results
+        elif len(dependencies) > 0:
+            result = self.state[brick_name].execute(
+                proto=self._execute_brick(dependency_graph=dependency_graph, brick_name=dependencies[0],
+                                          dependencies=self.dependency_graph[dependencies[0]], force_rerun=force_rerun),
+                force_rerun=force_rerun)
+            return result
+        else:
+            result = self.state[brick_name].execute(force_rerun=force_rerun)
+            return result
 
     def _get_config_for_brick(self, brick_name):
         return self.graph_config[brick_name]
