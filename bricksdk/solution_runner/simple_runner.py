@@ -43,16 +43,23 @@ class SimpleRunner(BaseRunner):
         results = []
         if len(dependencies) > 1:
             for index, dependency in enumerate(dependencies):
-                result = self.state[brick_name].execute(
-                    proto=self._execute_brick(dependency_graph=dependency_graph, brick_name=dependency,
-                                              dependencies=self.dependency_graph[dependency],
-                                              force_rerun=force_rerun),
-                    force_rerun=force_rerun
-                )
-                results.append(result)
+                inner_dependencies = dependency_graph[dependency]
+                for inner_dependency in inner_dependencies:
+                    result = self.state[dependency].execute(
+                        proto=self._execute_brick(dependency_graph=dependency_graph, brick_name=inner_dependency,
+                                                  dependencies=self.dependency_graph[inner_dependency],
+                                                  force_rerun=force_rerun),
+                        force_rerun=force_rerun
+                    )
+                    results.append(result)
                 if index < len(dependencies) - 1:
                     continue
-                return results
+                results = ", ".join(results)
+                result = self.state[brick_name].execute(
+                    proto=results,
+                    force_rerun=force_rerun
+                )
+                return result
         elif len(dependencies) > 0:
             result = self.state[brick_name].execute(
                 proto=self._execute_brick(dependency_graph=dependency_graph, brick_name=dependencies[0],
