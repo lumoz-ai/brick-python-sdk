@@ -19,7 +19,7 @@ class GrpcInputConnector(BaseInputConnector):
         self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
         GrpcInterface = self._build_grpc_interface()
         self.processor.get_add_servicer_method()(GrpcInterface(), self.server)
-        self.server.add_insecure_port('[::]:50051')
+        self.server.add_insecure_port("[::]:{}".format(self.config.grpc.port))
 
     def listen(self, request, context):
         return self.brick_processor.process(request, context)

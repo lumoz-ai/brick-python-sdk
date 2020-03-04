@@ -18,5 +18,5 @@ class GrpcConnector(BaseConnector):
         self.input_connector.initialize(*args, **kwargs)
 
     def initialize_output_connector(self, *args, **kwargs):
-        self.output_connector = GrpcOutputConnector(self.output_proto_file_path)
+        self.output_connector = GrpcOutputConnector(proto_file_path=self.output_proto_file_path, config=self.config)
         self.output_connector.initialize(*args, **kwargs)
