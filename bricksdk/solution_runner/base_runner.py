@@ -11,5 +11,5 @@ class BaseRunner(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def execute_graph(self):
+    def execute_graph(self, *args, **kwargs):
         pass
