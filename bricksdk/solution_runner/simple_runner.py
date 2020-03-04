@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 from .base_runner import BaseRunner
-from .brick_runner import BrickRunner
+from .brick_runner.base_brick_runner import TestBrickRunner
 
 
 class SimpleRunner(BaseRunner):
@@ -44,14 +44,19 @@ class SimpleRunner(BaseRunner):
         if len(dependencies) > 1:
             for index, dependency in enumerate(dependencies):
                 inner_dependencies = dependency_graph[dependency]
-                for inner_dependency in inner_dependencies:
-                    result = self.state[dependency].execute(
-                        proto=self._execute_brick(dependency_graph=dependency_graph, brick_name=inner_dependency,
-                                                  dependencies=self.dependency_graph[inner_dependency],
-                                                  force_rerun=force_rerun),
+                if inner_dependencies:
+                    for inner_dependency in inner_dependencies:
+                        result = self.state[dependency].execute(
+                            proto=self._execute_brick(dependency_graph=dependency_graph, brick_name=inner_dependency,
+                                                      dependencies=self.dependency_graph[inner_dependency],
+                                                      force_rerun=force_rerun),
+                            force_rerun=force_rerun
+                        )
+                        results.append(result)
+                else:
+                    results = [self.state[dependency].execute(
                         force_rerun=force_rerun
-                    )
-                    results.append(result)
+                    )]
                 if index < len(dependencies) - 1:
                     continue
                 results = ", ".join(results)
@@ -84,7 +89,7 @@ class SimpleRunner(BaseRunner):
         bricks = self.get_bricks()
         i = 0
         for brick in bricks:
-            runner = BrickRunner(brick_name=brick, brick_config=self._get_config_for_brick(brick))
+            runner = TestBrickRunner(brick_name=brick, brick_config=self._get_config_for_brick(brick))
             if brick in self.input_brick_names:
                 runner.proto = inputs[i]
                 i += 1
