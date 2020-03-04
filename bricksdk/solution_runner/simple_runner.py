@@ -29,8 +29,8 @@ class SimpleRunner(BaseRunner):
                 parents.append(name)
         return parents
 
-    def execute_graph(self, force_rerun=False):
-        self.state = self.create_state()
+    def execute_graph(self, inputs, force_rerun=False):
+        self.state = self.create_state(inputs)
         dependency_graph = deepcopy(self.dependency_graph)
         for output_brick_name in self.output_brick_names:
             dependency_graph.pop(output_brick_name)
@@ -79,9 +79,14 @@ class SimpleRunner(BaseRunner):
             bricks.append(brick)
         return bricks
 
-    def create_state(self):
+    def create_state(self, inputs):
         state = dict()
         bricks = self.get_bricks()
+        i = 0
         for brick in bricks:
-            state[brick] = BrickRunner(brick_name=brick, brick_config=self._get_config_for_brick(brick))
+            runner = BrickRunner(brick_name=brick, brick_config=self._get_config_for_brick(brick))
+            if brick in self.input_brick_names:
+                runner.proto = inputs[i]
+                i += 1
+            state[brick] = runner
         return state
