@@ -1,0 +1,13 @@
+{
+  "grpc": {
+    "port": 50051,
+    "host": "localhost"
+  },
+  "brick": {
+    "name": "input_brick",
+    "input_connector_type": 1,
+    "output_connector_type": 1,
+    "type": 1,
+    "id": 1
+  }
+}
