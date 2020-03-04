@@ -1,3 +1,6 @@
+from random import randint
+
+
 class BrickRunner:
 
     def __init__(self, brick_name, brick_config):
@@ -7,5 +10,5 @@ class BrickRunner:
 
     def execute(self, *args, force_rerun=False, **kwargs):
         if force_rerun or self.result is None:
-            self.result = "{}({})".format(self.brick_name, kwargs.get("proto", "input"))
+            self.result = "{}({}_{})".format(self.brick_name, randint(0, 100), kwargs.get("proto", "input"))
         return self.result
