@@ -1,1 +1,1 @@
-from .brick_runner import BrickRunner
+from .base_brick_runner import BaseBrickRunner
