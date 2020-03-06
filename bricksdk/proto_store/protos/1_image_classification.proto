@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+message Image {
+    int32 imageID = 1;
+    bytes imageBytes = 2;
+    int32 imageWidth = 3;
+    int32 imageHeight = 4;
+    int32 numberOfChannels = 5;
+    float sentAt = 6;
+}
+
+message Images {
+    repeated Image images = 1;
+    float sentAt = 6;
+}
+
+message ImageClassificationResult {
+    Image image = 1;
+    string label = 2;
+    float confidence = 3;
+    float sentAt = 6;
+}
+
+message ImageClassificationResults {
+    repeated ImageClassificationResult imageClassificationResults = 1;
+    float sentAt = 6;
+}
+
+service Brick {
+    rpc process (Images) returns (ImageClassificationResults) {
+    }
+}
