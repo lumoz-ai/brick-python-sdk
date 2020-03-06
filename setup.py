@@ -16,6 +16,9 @@ setup(
               'bricksdk.configurations',
               'bricksdk.connectors',
               'bricksdk.connectors.grpc',
-              'bricksdk.connectors.grpc.proto_processor'],
+              'bricksdk.connectors.grpc.proto_processor',
+              'bricksdk.solution_runner',
+              'bricksdk.solution_runner.brick_runner'
+              ],
     zip_safe=False
 )
