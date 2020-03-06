@@ -2,6 +2,7 @@ from copy import deepcopy
 
 from .base_runner import BaseRunner
 from .brick_runner.base_brick_runner import TestBrickRunner
+from .brick_runner.brick_runner import BrickRunner
 
 
 class SimpleRunner(BaseRunner):
@@ -76,7 +77,7 @@ class SimpleRunner(BaseRunner):
             return result
 
     def _get_config_for_brick(self, brick_name):
-        return self.graph_config[brick_name]
+        return self.graph_config.__dict__[brick_name]
 
     def get_bricks(self):
         bricks = []
@@ -89,9 +90,10 @@ class SimpleRunner(BaseRunner):
         bricks = self.get_bricks()
         i = 0
         for brick in bricks:
-            runner = TestBrickRunner(brick_name=brick, brick_config=self._get_config_for_brick(brick))
+            runner = BrickRunner(brick_name=brick, brick_config=self._get_config_for_brick(brick))
             if brick in self.input_brick_names:
                 runner.proto = inputs[i]
+                runner.result = inputs[i]
                 i += 1
             state[brick] = runner
         return state
