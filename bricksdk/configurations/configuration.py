@@ -1,21 +1,26 @@
+import os
 import re
-from ..utils import Singleton
+import json
+from ..utils import Singleton, Environments
 
 
 class Configuration(metaclass=Singleton):
 
     def __init__(self, *args, **kwargs):
-        pass
+        self.environment = kwargs.get("env", Environments.DEBUG_ENV)
 
-    def load(self, json: dict):
+    def load(self, configuration_json: dict = None):
+        if not configuration_json:
+            configuration_json_file = os.path.join(os.getcwd(), "configurations", "{}.json".format(self.environment))
+            configuration_json = json.load(open(configuration_json_file, "r"))
         try:
-            for key, value in json.items():
+            for key, value in configuration_json.items():
                 if type(value) is dict:
                     value = self._build(key, value)
                 self.__setattr__(self._to_snake(key), value)
             return self
         except:
-            pass
+            return None
 
     def _build(self, name, attributes: dict):
         configuration_class = type(self._to_camel(name, True), (Configuration,), {})
