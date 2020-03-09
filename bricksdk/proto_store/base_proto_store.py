@@ -22,7 +22,8 @@ class FileBasedProtoStore(BaseProtoStore):
         proto_file_names = os.listdir(self.proto_store_config.store_location)
         new_proto_id = len(proto_file_names) + 1
         proto_file_name = proto_file_path[proto_file_path.rfind("/") + 1:]
-        proto_file_name = "{}_{}".format(new_proto_id, proto_file_name)
+        dot_index = proto_file_name.rfind(".")
+        proto_file_name = "{}_{}.{}".format(proto_file_name[:dot_index], new_proto_id, proto_file_name[dot_index + 1:])
         new_proto_file_path = os.path.join(self.proto_store_config.store_location, proto_file_name)
         shutil.copy(proto_file_path, new_proto_file_path)
         return new_proto_id
@@ -30,7 +31,7 @@ class FileBasedProtoStore(BaseProtoStore):
     def get_proto_from_store(self, proto_id):
         proto_file_names = os.listdir(self.proto_store_config.store_location)
         for proto_file_name in proto_file_names:
-            if proto_file_name.startswith(str(proto_id)):
+            if proto_file_name.endswith("{}.proto".format(proto_id)):
                 proto_file_path = os.path.join(self.proto_store_config.store_location, proto_file_name)
                 return proto_file_name, proto_file_path
         return None, None
