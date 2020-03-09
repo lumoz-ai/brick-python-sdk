@@ -3,6 +3,8 @@ from abc import ABC
 from .configurations import Configuration
 from .connectors.grpc.grpc_input_connector import GrpcInputConnector
 from .connectors.grpc.grpc_output_connector import GrpcOutputConnector
+from .observer import Publisher
+from .observer.events import EventTypes, OnInputEvent
 from .proto_store import FileBasedProtoStore
 from .solution_runner.simple_runner import SimpleRunner
 from .utils import Environments
@@ -20,13 +22,19 @@ class BaseBrick(ABC):
         self.output_connector = None
         self.configuration = None
         self.solution_runner = None
+        self.event_registry = Publisher()
 
     def start(self):
         pass
 
     def initialize_components(self):
+        self.event_registry.register_subscriber_for(event=EventTypes.ON_INPUT_EVENT, subscriber=self,
+                                                    callback_method=self.on_input)
         self.input_connector.initialize()
         self.output_connector.initialize()
+
+    def on_input(self, on_input_event: OnInputEvent):
+        self.solution_runner.execute_graph(inputs=on_input_event.value)
 
 
 class Brick(BaseBrick):
@@ -68,16 +76,17 @@ class BrickFactory:
         return self
 
     def add_solution_runner(self, graph):
-        solution_runner = SimpleRunner(input_brick_names=self.configuration.meta.input_names,
-                                       output_brick_names=self.configuration.meta.output_names, graph_config=None)
+        solution_runner = SimpleRunner(input_brick_names=self.configuration.meta.input_brick_names,
+                                       output_brick_names=self.configuration.meta.output_brick_names,
+                                       graph_config=self.configuration.graph_configuration)
         solution_runner.generate_dependency_graph(graph)
         self.brick.solution_runner = solution_runner
         return self
 
-    def create_brick(self, is_input_brick=False, graph=None):
+    def create_brick(self, is_input_brick=False):
         self.add_proto_store()
         self.add_grpc_input()
         self.add_grpc_output()
         if is_input_brick:
-            self.add_solution_runner(graph=graph)
+            self.add_solution_runner(graph=self.configuration.graph.__dict__)
         return self.brick
