@@ -6,7 +6,7 @@ from bricksdk.connectors import get_connector
 from protos import image_pb2
 
 config = Configuration()
-config.load(json=json.load(open("sample_configuration.json", "r")))
+config.load(configuration_json=json.load(open("sample_configuration.json", "r")))
 
 
 class BrickProcessor:
