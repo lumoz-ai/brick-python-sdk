@@ -4,7 +4,6 @@ from .configurations import Configuration
 from .connectors.grpc.grpc_input_connector import GrpcInputConnector
 from .connectors.grpc.grpc_output_connector import GrpcOutputConnector
 from .observer import Publisher
-from .observer.events import EventTypes, OnInputEvent
 from .proto_store import FileBasedProtoStore
 from .solution_runner.simple_runner import SimpleRunner
 from .utils import Environments
@@ -28,13 +27,11 @@ class BaseBrick(ABC):
         pass
 
     def initialize_components(self):
-        self.event_registry.register_subscriber_for(event=EventTypes.ON_INPUT_EVENT, subscriber=self,
-                                                    callback_method=self.on_input)
         self.input_connector.initialize()
         self.output_connector.initialize()
 
-    def on_input(self, on_input_event: OnInputEvent):
-        self.solution_runner.execute_graph(inputs=on_input_event.value)
+    def execute(self, inputs):
+        return self.solution_runner.execute_graph(inputs=inputs)
 
 
 class Brick(BaseBrick):
@@ -48,9 +45,9 @@ class Brick(BaseBrick):
 
 class BrickFactory:
 
-    def __init__(self, *args, env=Environments.DEBUG_ENV, **kwargs):
+    def __init__(self, *args, environment=Environments.DEBUG_ENV, **kwargs):
         self.brick_processor = None
-        self.configuration = Configuration(env).load()
+        self.configuration = Configuration(environment=environment).load()
         self.brick = Brick()
 
     def add_brick_processor(self, brick_processor):

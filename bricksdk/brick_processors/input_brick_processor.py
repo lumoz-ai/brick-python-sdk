@@ -1,13 +1,11 @@
 from .base_brick_processor import BaseBrickProcessor
-from ..observer import Publisher
-from ..observer.events import EventTypes, OnInputEvent
 
 
 class InputBrickProcessor(BaseBrickProcessor):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, brick, **kwargs):
         super().__init__(*args, **kwargs)
+        self.brick = brick
 
     def process(self, *args, inputs, **kwargs):
-        message = OnInputEvent(inputs)
-        Publisher().publish_for(event=EventTypes.ON_INPUT_EVENT, message=message)
+        return self.brick.execute(inputs=inputs)
