@@ -7,7 +7,8 @@ from ..utils import Singleton, Environments
 class Configuration(metaclass=Singleton):
 
     def __init__(self, *args, **kwargs):
-        self.environment = kwargs.get("env", Environments.DEBUG_ENV)
+        if kwargs.get("environment", None):
+            self.environment = kwargs["environment"]
 
     def load(self, configuration_json: dict = None):
         if not configuration_json:
@@ -23,7 +24,7 @@ class Configuration(metaclass=Singleton):
             return None
 
     def _build(self, name, attributes: dict):
-        configuration_class = type(self._to_camel(name, True), (Configuration,), {})
+        configuration_class = type(self._to_camel(variable_name=name, capitalize=True), (Configuration,), {})
         configuration_object = configuration_class()
         for key, value in attributes.items():
             if type(value) is dict:
@@ -31,7 +32,7 @@ class Configuration(metaclass=Singleton):
             configuration_object.__setattr__(self._to_snake(key), value)
         return configuration_object
 
-    def update(self, json):
+    def update(self, configuration_json):
         pass
 
     def get_variables(self):
