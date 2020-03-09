@@ -40,7 +40,8 @@ class Brick(BaseBrick):
         super().__init__(*args, **kwargs)
 
     def start(self):
-        pass
+        self.output_connector.start()
+        self.input_connector.start()
 
 
 class BrickFactory:

@@ -80,10 +80,8 @@ class SimpleRunner(BaseRunner):
         return self.graph_config.__dict__[brick_name]
 
     def get_bricks(self):
-        bricks = []
         for brick, value in self.dependency_graph.items():
-            bricks.append(brick)
-        return bricks
+            yield brick
 
     def create_state(self, inputs):
         state = dict()
