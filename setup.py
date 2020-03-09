@@ -13,6 +13,8 @@ setup(
         'grpcio-tools',
     ],
     packages=['bricksdk',
+              'bricksdk.brick_processors',
+              'bricksdk.observer',
               'bricksdk.configurations',
               'bricksdk.connectors',
               'bricksdk.connectors.grpc',
