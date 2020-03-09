@@ -22,5 +22,6 @@ setup(
               'bricksdk.proto_store',
               'bricksdk.proto_store.protos'
               ],
+    package_data={'bricksdk': ['proto_store/protos/*.proto']},
     zip_safe=False
 )
