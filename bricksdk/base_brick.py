@@ -5,6 +5,7 @@ from .connectors.grpc.grpc_input_connector import GrpcInputConnector
 from .connectors.grpc.grpc_output_connector import GrpcOutputConnector
 from .observer import Publisher
 from .proto_store import FileBasedProtoStore
+from .solution_runner.brick_runner.base_brick_runner import TestBrickRunner
 from .solution_runner.simple_runner import SimpleRunner
 from .utils import Environments
 
@@ -53,6 +54,11 @@ class BrickFactory:
 
     def add_brick_processor(self, brick_processor):
         self.brick_processor = brick_processor
+        return self
+
+    def add_dummy_brick_runner(self, brick_runner_class=None):
+        brick_runner_class = TestBrickRunner if brick_runner_class is None else brick_runner_class
+        self.brick.solution_runner.brick_runner = brick_runner_class
         return self
 
     def add_proto_store(self):
