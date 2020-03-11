@@ -1,0 +1,12 @@
+{
+  "requirements": {
+    "minimumRequirements": {
+      "cpu": "AMD Ryzen 3 first generation or higher",
+      "gpu": "GTX 1060 or higher"
+    },
+    "recommendedRequirements": {
+      "cpu": "AMD Ryzen 3 first generation or higher",
+      "gpu": "GTX 1060 or higher"
+    }
+  }
+}
