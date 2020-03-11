@@ -7,10 +7,10 @@ from .observer import Publisher
 from .proto_store import FileBasedProtoStore
 from .solution_runner.brick_runner.base_brick_runner import TestBrickRunner
 from .solution_runner.simple_runner import SimpleRunner
-from .utils import Environments, Singleton
+from .utils import Environments, ABCSingleton
 
 
-class BaseBrick(ABC, metaclass=Singleton):
+class BaseBrick(ABC, metaclass=ABCSingleton):
 
     def __init__(self, *args, **kwargs):
         self.input_proto_file = None
@@ -51,6 +51,7 @@ class BrickFactory:
         self.brick_processor = None
         self.configuration = Configuration(environment=environment).load()
         self.brick = Brick()
+        self.brick.configuration = self.configuration
 
     def add_brick_processor(self, brick_processor):
         self.brick_processor = brick_processor
