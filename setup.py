@@ -1,4 +1,18 @@
+import os
+
 from setuptools import setup
+
+
+def package_files(directory):
+    paths = []
+    for (path, directories, filenames) in os.walk(directory):
+        for filename in filenames:
+            paths.append(os.path.join('..', path, filename))
+    return paths
+
+
+extra_files = package_files("./bricksdk/brick_commands/templates")
+extra_files += package_files("./bricksdk/proto_store/protos")
 
 setup(
     name='bricksdk',
@@ -16,9 +30,6 @@ setup(
     packages=['bricksdk',
               'bricksdk.brick_processors',
               'bricksdk.brick_commands',
-              'bricksdk.brick_commands.templates',
-              'bricksdk.brick_commands.templates.generic',
-              'bricksdk.brick_commands.templates.input',
               'bricksdk.observer',
               'bricksdk.configurations',
               'bricksdk.connectors',
@@ -29,6 +40,6 @@ setup(
               'bricksdk.proto_store',
               'bricksdk.proto_store.protos'
               ],
-    package_data={'bricksdk': ['proto_store/protos/*.proto']},
+    package_data={'bricksdk': extra_files},
     zip_safe=False
 )
