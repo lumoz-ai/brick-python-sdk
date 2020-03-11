@@ -7,10 +7,10 @@ from .observer import Publisher
 from .proto_store import FileBasedProtoStore
 from .solution_runner.brick_runner.base_brick_runner import TestBrickRunner
 from .solution_runner.simple_runner import SimpleRunner
-from .utils import Environments
+from .utils import Environments, Singleton
 
 
-class BaseBrick(ABC):
+class BaseBrick(ABC, metaclass=Singleton):
 
     def __init__(self, *args, **kwargs):
         self.input_proto_file = None
