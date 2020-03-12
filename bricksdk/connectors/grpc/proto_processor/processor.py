@@ -134,9 +134,9 @@ class Parser(abc.ABC):
         self.proto_name = self.proto_file_name.split(".")[0]
 
     def get_pb_and_grpc(self):
+        folders = self.output_directory.split("/")
+        protos_module = ".".join(folders)
         if self.pb_module is None:
-            folders = self.output_directory.split("/")
-            protos_module = ".".join(folders)
             self.pb_module = import_module("{}.{}".format(protos_module, self.get_pb_file_name()))
         if self.grpc_module is None:
             self.grpc_module = import_module("{}.{}".format(protos_module, self.get_grpc_file_name()))
