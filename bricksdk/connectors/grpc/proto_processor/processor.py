@@ -151,9 +151,11 @@ class Parser(abc.ABC):
 
     def get_pb_and_grpc(self):
         if self.pb_module is None:
-            self.pb_module = import_module("{}.{}".format(self.output_directory, self.get_pb_file_name()))
+            folders = self.output_directory.split("/")
+            protos_module = ".".join(folders)
+            self.pb_module = import_module("{}.{}".format(protos_module, self.get_pb_file_name()))
         if self.grpc_module is None:
-            self.grpc_module = import_module("{}.{}".format(self.output_directory, self.get_grpc_file_name()))
+            self.grpc_module = import_module("{}.{}".format(protos_module, self.get_grpc_file_name()))
         return self.pb_module, self.grpc_module
 
     def get_pb_file_name(self):
