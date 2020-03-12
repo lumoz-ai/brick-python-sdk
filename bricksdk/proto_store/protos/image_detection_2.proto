@@ -26,7 +26,8 @@ message BoundingBox {
 message ImageDetectionResult {
     Image image = 1;
     repeated BoundingBox boundingBoxes = 2;
-    float sentAt = 3;
+    repeated Image detectedObjects = 3;
+    float sentAt = 4;
 }
 
 message ImageDetectionResults {
