@@ -107,8 +107,6 @@ class Processor(abc.ABC):
 
 
 class Parser(abc.ABC):
-    PROTO_TEMPLATE = "{}_pb2"
-    GRPC_TEMPLATE = "{}_pb2_grpc"
 
     def __init__(self, proto_file_path, input_directory="protos", output_directory="protos"):
         self.proto_file_path = proto_file_path
@@ -131,53 +129,91 @@ class Parser(abc.ABC):
         else:
             self.proto_file_name = self.proto_file_path
             self.proto_input_directory = "."
-        self.proto_name = self.proto_file_name.split(".")[0]
+        self.proto_name = ProtoUtils.get_proto_name_from_proto_file_name(proto_file_name=self.proto_file_name)
 
     def get_pb_and_grpc(self):
         folders = self.output_directory.split("/")
         protos_module = ".".join(folders)
         if self.pb_module is None:
-            self.pb_module = import_module("{}.{}".format(protos_module, self.get_pb_file_name()))
+            self.pb_module = import_module(
+                "{}.{}".format(protos_module, ProtoUtils.get_pb_file_name(proto_name=self.proto_name)))
         if self.grpc_module is None:
-            self.grpc_module = import_module("{}.{}".format(protos_module, self.get_grpc_file_name()))
+            self.grpc_module = import_module("{}.{}".format(protos_module,
+                                                            ProtoUtils.get_grpc_file_name(proto_name=self.proto_name)))
         return self.pb_module, self.grpc_module
 
-    def get_pb_file_name(self):
-        return self.PROTO_TEMPLATE.format(self.proto_name)
-
-    def get_grpc_file_name(self):
-        return self.GRPC_TEMPLATE.format(self.proto_name)
-
     def get_relative_proto_path(self):
-        return os.path.join(self.output_directory, self.get_grpc_file_name())
+        return os.path.join(self.output_directory, ProtoUtils.get_grpc_file_name(proto_name=self.proto_name))
 
     def get_pb_python_file(self):
-        return os.path.join(self.output_directory, "{}.py".format(self.get_pb_file_name()))
+        return os.path.join(self.output_directory,
+                            "{}.py".format(ProtoUtils.get_pb_file_name(proto_name=self.proto_name)))
 
     def get_grpc_python_file(self):
-        return os.path.join(self.output_directory, "{}.py".format(self.get_grpc_file_name()))
+        return os.path.join(self.output_directory,
+                            "{}.py".format(ProtoUtils.get_grpc_file_name(proto_name=self.proto_name)))
+
+
+class ProtoUtils:
+    PROTO_TEMPLATE = "{}_pb2"
+    GRPC_TEMPLATE = "{}_pb2_grpc"
+
+    @staticmethod
+    def get_pb_file_name(*, proto_name):
+        return ProtoUtils.PROTO_TEMPLATE.format(proto_name)
+
+    @staticmethod
+    def get_grpc_file_name(*, proto_name):
+        return ProtoUtils.GRPC_TEMPLATE.format(proto_name)
+
+    @staticmethod
+    def get_proto_name_from_proto_file_name(*, proto_file_name):
+        return proto_file_name.split(".")[0]
 
 
 class ProtoCompiler:
+    IMPORT_STATEMENT_REGEX = r"\"\w+.proto\""
 
-    def __init__(self, *, input_directory, output_directory, proto_file_name, grpc_file_name):
+    def __init__(self, *, proto_file_name, input_directory, output_directory):
         self.input_directory = input_directory
         self.output_directory = output_directory
         self.proto_file_name = proto_file_name
-        self.grpc_file_name = grpc_file_name
 
-    def compile_proto(self):
+    def compile(self):
+        self._compile(self.proto_file_name)
+        grpc_file_name = ProtoUtils.get_grpc_file_name(
+            proto_name=ProtoUtils.get_proto_name_from_proto_file_name(
+                proto_file_name=self.proto_file_name))
+        pb_file_name = ProtoUtils.get_pb_file_name(
+            proto_name=ProtoUtils.get_proto_name_from_proto_file_name(proto_file_name=self.proto_file_name))
+        self.fix_pb_import(grpc_file_name)
+        self.fix_pb_import(pb_file_name)
+
+    def get_dependencies_for_proto(self, proto_name):
+        proto_file_path = os.path.join(self.input_directory, proto_name)
+        proto_file_content = open(proto_file_path, "r").read()
+        import_statements = re.findall(self.IMPORT_STATEMENT_REGEX, proto_file_content)
+        import_proto_names = list(map(lambda import_statement: import_statement[1:-1], import_statements))
+        return import_proto_names
+
+    def _compile(self, proto_file_name):
+        print("Compiling {}".format(proto_file_name))
+        dependencies = self.get_dependencies_for_proto(proto_file_name)
+        for dependency in dependencies:
+            self._compile(dependency)
+        self.compile_proto(proto_file_name=proto_file_name)
+
+    def compile_proto(self, *, proto_file_name):
         # Create pb2
         protoc.main(["-m grpc_tools.protoc", "-I={}".format(self.input_directory),
-                     "--python_out={}".format(self.output_directory), self.proto_file_name])
+                     "--python_out={}".format(self.output_directory), proto_file_name])
         # Create pb2_grpc
         protoc.main(["-m grpc_tools.protoc", "-I={}".format(self.input_directory),
-                     "--grpc_python_out={}".format(self.output_directory), self.proto_file_name])
+                     "--grpc_python_out={}".format(self.output_directory), proto_file_name])
         with open(os.path.join(self.output_directory, "__init__.py"), "w") as _:
             pass
-        self.fix_pb_import()
 
-    def fix_pb_import(self):
+    def fix_pb_import(self, grpc_file_name):
         command = "sed -i -E 's/^import.*_pb2/from . \\0/' {}/{}.py".format(self.output_directory,
-                                                                            self.grpc_file_name)
+                                                                            grpc_file_name)
         os.system(command)
