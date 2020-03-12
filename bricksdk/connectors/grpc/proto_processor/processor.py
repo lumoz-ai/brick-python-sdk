@@ -133,22 +133,6 @@ class Parser(abc.ABC):
             self.proto_input_directory = "."
         self.proto_name = self.proto_file_name.split(".")[0]
 
-    def compile_proto(self):
-        # Create pb2
-        protoc.main(["-m grpc_tools.protoc", "-I={}".format(self.input_directory),
-                     "--python_out={}".format(self.output_directory), self.proto_file_name])
-        # Create pb2_grpc
-        protoc.main(["-m grpc_tools.protoc", "-I={}".format(self.input_directory),
-                     "--grpc_python_out={}".format(self.output_directory), self.proto_file_name])
-        with open(os.path.join(self.output_directory, "__init__.py"), "w") as _:
-            pass
-        self.fix_pb_import()
-
-    def fix_pb_import(self):
-        command = "sed -i -E 's/^import.*_pb2/from . \\0/' {}/{}.py".format(self.output_directory,
-                                                                            self.get_grpc_file_name())
-        os.system(command)
-
     def get_pb_and_grpc(self):
         if self.pb_module is None:
             folders = self.output_directory.split("/")
@@ -172,3 +156,28 @@ class Parser(abc.ABC):
 
     def get_grpc_python_file(self):
         return os.path.join(self.output_directory, "{}.py".format(self.get_grpc_file_name()))
+
+
+class ProtoCompiler:
+
+    def __init__(self, *, input_directory, output_directory, proto_file_name, grpc_file_name):
+        self.input_directory = input_directory
+        self.output_directory = output_directory
+        self.proto_file_name = proto_file_name
+        self.grpc_file_name = grpc_file_name
+
+    def compile_proto(self):
+        # Create pb2
+        protoc.main(["-m grpc_tools.protoc", "-I={}".format(self.input_directory),
+                     "--python_out={}".format(self.output_directory), self.proto_file_name])
+        # Create pb2_grpc
+        protoc.main(["-m grpc_tools.protoc", "-I={}".format(self.input_directory),
+                     "--grpc_python_out={}".format(self.output_directory), self.proto_file_name])
+        with open(os.path.join(self.output_directory, "__init__.py"), "w") as _:
+            pass
+        self.fix_pb_import()
+
+    def fix_pb_import(self):
+        command = "sed -i -E 's/^import.*_pb2/from . \\0/' {}/{}.py".format(self.output_directory,
+                                                                            self.grpc_file_name)
+        os.system(command)
