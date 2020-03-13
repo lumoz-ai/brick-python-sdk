@@ -157,6 +157,7 @@ class Parser(abc.ABC):
 class ProtoUtils:
     PROTO_TEMPLATE = "{}_pb2"
     GRPC_TEMPLATE = "{}_pb2_grpc"
+    IMPORT_STATEMENT_REGEX = r"\"\w+.proto\""
 
     @staticmethod
     def get_pb_file_name(*, proto_name):
@@ -170,9 +171,16 @@ class ProtoUtils:
     def get_proto_name_from_proto_file_name(*, proto_file_name):
         return proto_file_name.split(".")[0]
 
+    @staticmethod
+    def get_dependencies_for_proto(*, input_directory, proto_file_name):
+        proto_file_path = os.path.join(input_directory, proto_file_name)
+        proto_file_content = open(proto_file_path, "r").read()
+        import_statements = re.findall(ProtoUtils.IMPORT_STATEMENT_REGEX, proto_file_content)
+        import_proto_names = list(map(lambda import_statement: import_statement[1:-1], import_statements))
+        return import_proto_names
+
 
 class ProtoCompiler:
-    IMPORT_STATEMENT_REGEX = r"\"\w+.proto\""
 
     def __init__(self, *, proto_file_name, input_directory, output_directory):
         self.input_directory = input_directory
@@ -189,16 +197,10 @@ class ProtoCompiler:
         self.fix_pb_import(grpc_file_name)
         self.fix_pb_import(pb_file_name)
 
-    def get_dependencies_for_proto(self, proto_name):
-        proto_file_path = os.path.join(self.input_directory, proto_name)
-        proto_file_content = open(proto_file_path, "r").read()
-        import_statements = re.findall(self.IMPORT_STATEMENT_REGEX, proto_file_content)
-        import_proto_names = list(map(lambda import_statement: import_statement[1:-1], import_statements))
-        return import_proto_names
-
     def _compile(self, proto_file_name):
         print("Compiling {}".format(proto_file_name))
-        dependencies = self.get_dependencies_for_proto(proto_file_name)
+        dependencies = ProtoUtils.get_dependencies_for_proto(input_directory=self.input_directory,
+                                                             proto_file_name=proto_file_name)
         for dependency in dependencies:
             self._compile(dependency)
         self.compile_proto(proto_file_name=proto_file_name)
