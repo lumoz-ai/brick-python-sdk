@@ -3,6 +3,8 @@ import os
 import abc
 import shutil
 
+from ..connectors.grpc.proto_processor.processor import ProtoUtils
+
 
 class BaseProtoStore(abc.ABC):
 
@@ -30,7 +32,7 @@ class FileBasedProtoStore(BaseProtoStore):
         return current_class_path[:current_class_path.rfind("/")]
 
     def register_proto(self, proto_file_path: str):
-        store_location = os.path.join(self.module_director, self.proto_store_config.store_location)
+        store_location = self.get_store_location()
         proto_file_names = os.listdir(store_location)
         new_proto_id = len(proto_file_names) + 1
         proto_file_name = proto_file_path[proto_file_path.rfind("/") + 1:]
@@ -41,12 +43,23 @@ class FileBasedProtoStore(BaseProtoStore):
         return new_proto_id
 
     def get_proto_from_store(self, proto_id):
-        store_location = os.path.join(self.module_director, self.proto_store_config.store_location)
+        store_location = self.get_store_location()
         proto_file_names = os.listdir(store_location)
         for proto_file_name in proto_file_names:
             if proto_file_name.endswith("{}.proto".format(proto_id)):
-                proto_file_path = os.path.join(store_location, proto_file_name)
-                shutil.copy(proto_file_path, self.project_proto_directory)
+                self.copy_dependencies_for(proto_file_name)
                 proto_file_path = os.path.join(self.project_proto_directory, proto_file_name)
                 return proto_file_name, proto_file_path
         return None, None
+
+    def get_store_location(self):
+        return os.path.join(self.module_director, self.proto_store_config.store_location)
+
+    def copy_dependencies_for(self, proto_file_name):
+        store_location = self.get_store_location()
+        dependencies = ProtoUtils.get_dependencies_for_proto(input_directory=store_location,
+                                                             proto_file_name=proto_file_name)
+        for dependency in dependencies:
+            self.copy_dependencies_for(dependency)
+        source_proto_file_path = os.path.join(store_location, proto_file_name)
+        shutil.copy(source_proto_file_path, self.project_proto_directory)
