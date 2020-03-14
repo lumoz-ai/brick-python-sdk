@@ -42,7 +42,7 @@ class SimpleRunner(BaseRunner):
 
     def _execute_brick(self, dependency_graph, brick_name, dependencies, force_rerun=False):
         results = []
-        if len(dependencies) > 1:
+        if len(dependencies) > 0:
             for index, dependency in enumerate(dependencies):
                 inner_dependencies = dependency_graph[dependency]
                 if inner_dependencies:
@@ -60,18 +60,21 @@ class SimpleRunner(BaseRunner):
                     )]
                 if index < len(dependencies) - 1:
                     continue
-                results = ", ".join(results)
+                if len(results) > 1:
+                    if type(results[0]) is str:
+                        results = ", ".join(results)
+                    else:
+                        # TODO build logic to combine two or more protos if its compatible with the
+                        #  expected proto required to execute the brick else raise error
+                        results = results[0]
+                else:
+                    results = results[0]
                 result = self.state[brick_name].execute(
                     proto=results,
                     force_rerun=force_rerun
                 )
                 return result
-        elif len(dependencies) > 0:
-            result = self.state[brick_name].execute(
-                proto=self._execute_brick(dependency_graph=dependency_graph, brick_name=dependencies[0],
-                                          dependencies=self.dependency_graph[dependencies[0]], force_rerun=force_rerun),
-                force_rerun=force_rerun)
-            return result
+
         else:
             result = self.state[brick_name].execute(force_rerun=force_rerun)
             return result
