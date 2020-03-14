@@ -13,18 +13,3 @@ message Images {
     repeated Image images = 1;
     float sentAt = 6;
 }
-
-message ImageOcrResult {
-    Image image = 1;
-    string text = 2;
-}
-
-message ImageOcrResults {
-    repeated ImageOcrResult imageOcrResult = 1;
-    float sentAt = 6;
-}
-
-service Brick {
-    rpc process (Images) returns (ImageOcrResults) {
-    }
-}
