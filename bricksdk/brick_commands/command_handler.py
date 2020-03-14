@@ -1,10 +1,11 @@
 import inspect
 import os
 
-from . import create
+from . import create, proto
 
 CREATE_COMMAND = "create"
 INITIALIZE_COMMAND = "initialize"
+PROTO_COMMAND = "proto"
 
 
 class BrickCommandHandler:
@@ -26,3 +27,8 @@ class BrickCommandHandler:
                               set_as_input=self.command_line_arguments.set_as_input,
                               template_folder=template_folder
                               )
+        if self.command_line_arguments.command == PROTO_COMMAND:
+            if self.command_line_arguments.download:
+                proto.download_proto()
+            if self.command_line_arguments.compile:
+                proto.compile_proto()
