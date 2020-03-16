@@ -12,7 +12,7 @@ message ImageOcrResults {
     float sentAt = 6;
 }
 
-service Brick {
+service OcrBrick {
     rpc process (Images) returns (ImageOcrResults) {
     }
 }
