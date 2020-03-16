@@ -49,7 +49,8 @@ class BrickFactory:
 
     def __init__(self, *args, environment=Environments.DEBUG_ENV, **kwargs):
         self.brick_processor = None
-        self.configuration = Configuration(environment=environment).load()
+        self.configuration = kwargs.get("configuration") if kwargs.get("configuration") else Configuration(
+            environment=environment).load()
         self.brick = Brick()
         self.brick.configuration = self.configuration
 
