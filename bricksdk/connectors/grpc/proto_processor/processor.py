@@ -56,6 +56,10 @@ class Processor(abc.ABC):
         method_name = rpc_string.split(" ")[-1]
         return method_name
 
+    def get_rpc_declaration(self):
+        rpc_string = re.findall(self.RPC_FROM_PROTO_FILE_REGEX, self._get_proto_file_content())
+        return rpc_string
+
     def _get_proto_file_content(self):
         if self.proto_file_content is None:
             self.proto_file_content = open(self.proto_file_path, "r").read()
