@@ -35,7 +35,7 @@ class Builder(abc.ABC):
 
 
 class Processor(abc.ABC):
-    RPC_FROM_PROTO_FILE_REGEX = r"rpc \w+\(\w+\) returns \(\w+\)"
+    RPC_FROM_PROTO_FILE_REGEX = r"rpc\w+\(\w+\)returns\(\w+\)"
     RPC_NAME_REGEX = r"rpc \w+"
     ADD_SERVICER_TO_SERVER_REGEX = r"add_\w+_to_server"
     STUB_REGEX = r"\w+Stub"
