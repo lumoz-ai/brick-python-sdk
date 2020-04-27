@@ -57,7 +57,7 @@ class Processor(abc.ABC):
         return method_name
 
     def get_rpc_declaration(self):
-        rpc_string = re.findall(self.RPC_FROM_PROTO_FILE_REGEX, self._get_proto_file_content())
+        rpc_string = re.findall(self.RPC_FROM_PROTO_FILE_REGEX, self._get_proto_file_content().replace(" ", ""))
         return rpc_string
 
     def _get_proto_file_content(self):
