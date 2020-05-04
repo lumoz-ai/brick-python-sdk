@@ -11,6 +11,7 @@ def get_connector(config, brick_processor, *args, **kwargs):
 
 def get_input_connector(config, brick_processor, *args, **kwargs):
     assert config.brick.input_connector_type is not None
+    config.brick.input_connector_type = int(config.brick.input_connector_type)
     input_connector = INPUT_CONNECTORS[config.brick.input_connector_type](
         *args, config=config, brick_processor=brick_processor, **kwargs
     )
@@ -19,7 +20,8 @@ def get_input_connector(config, brick_processor, *args, **kwargs):
 
 
 def get_output_connector(config, *args, **kwargs):
-    assert config.brick.input_connector_type is not None
+    assert config.brick.output_connector_type is not None
+    config.brick.output_connector_type = int(config.brick.output_connector_type)
     output_connector = OUTPUT_CONNECTORS[config.brick.output_connector_type](*args, config=config, **kwargs)
     output_connector.initialize()
     return output_connector

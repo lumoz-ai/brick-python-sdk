@@ -43,6 +43,7 @@ class FileBasedProtoStore(BaseProtoStore):
         return new_proto_id
 
     def get_proto_from_store(self, proto_id):
+        proto_id = int(proto_id)
         store_location = self.get_store_location()
         proto_file_names = os.listdir(store_location)
         for proto_file_name in proto_file_names:
