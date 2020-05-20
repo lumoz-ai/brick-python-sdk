@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+import "string_6.proto";
+
+message Answer {
+    string answer = 1;
+    float score = 2;
+    string context = 3;
+    int32 offset_start = 4;
+    int32 offset_end = 5;
+    int32 offset_start_in_doc = 6;
+    int32 offset_end_in_doc = 7;
+    string document_id = 8;
+    string document_name = 9;
+    float confidence = 10;
+}
+
+message QNAResult {
+    string question = 1;
+    repeated Answer answers = 2;
+    float sentAt = 4;
+}
+
+message QNAResults {
+    repeated QNAResult qnaResults = 1;
+    float sentAt = 2;
+}
+
+service Brick {
+    rpc process (Strings) returns (QNAResults) {
+    }
+}

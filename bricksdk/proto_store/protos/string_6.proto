@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+message String {
+    bool train = 1;
+    string content = 2;
+    float sentAt = 3;
+}
+
+message Strings {
+    repeated String images = 1;
+    float sentAt = 2;
+}
