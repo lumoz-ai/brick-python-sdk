@@ -1,0 +1,15 @@
+{
+  "grpc": {
+    "host": "localhost",
+    "port": 50052
+  },
+  "brick": {
+    "inputConnectorType": 1,
+    "outputConnectorType": 1,
+    "inputProtoId": 1,
+    "outputProtoId": 1
+  },
+  "protoStoreConfiguration": {
+    "storeLocation": "protos"
+  }
+}

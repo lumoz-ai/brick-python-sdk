@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+message Image {
+    int32 imageID = 1;
+    bytes imageBytes = 2;
+    int32 imageWidth = 3;
+    int32 imageHeight = 4;
+    int32 numberOfChannels = 5;
+    float sentAt = 6;
+}
+
+message Images {
+    repeated Image images = 1;
+    float sentAt = 6;
+}

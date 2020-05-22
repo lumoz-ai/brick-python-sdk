@@ -1,0 +1,118 @@
+{
+  "grpc": {
+    "host": "localhost",
+    "port": 50051
+  },
+  "brick": {
+    "input_proto_id": 1,
+    "output_proto_id": 1
+  },
+  "meta": {
+    "input_brick_names": [
+      "input_brick"
+    ],
+    "output_brick_names": [
+      "output_brick"
+    ]
+  },
+  "proto_store_configuration": {
+    "store_location": "protos"
+  },
+  "graph": {
+    "input_brick": [
+      "output_brick"
+    ]
+  },
+  "graph_configuration": {
+    "input_brick": {
+      "grpc": {
+        "port": 50051,
+        "host": "localhost"
+      },
+      "brick": {
+        "name": "input_brick",
+        "input_connector_type": 1,
+        "output_connector_type": 1,
+        "input_proto_id": 1,
+        "output_proto_id": 1,
+        "type": 1,
+        "id": 1
+      },
+      "proto_store_configuration": {
+        "store_location": "protos"
+      }
+    },
+    "car_detector_brick": {
+      "grpc": {
+        "port": 50051,
+        "host": "localhost"
+      },
+      "brick": {
+        "name": "input_brick",
+        "input_connector_type": 1,
+        "output_connector_type": 1,
+        "input_proto_id": 1,
+        "output_proto_id": 1,
+        "type": 1,
+        "id": 1
+      },
+      "proto_store_configuration": {
+        "store_location": "protos"
+      }
+    },
+    "license_detector_brick": {
+      "grpc": {
+        "port": 50051,
+        "host": "localhost"
+      },
+      "brick": {
+        "name": "input_brick",
+        "input_connector_type": 1,
+        "output_connector_type": 1,
+        "input_proto_id": 1,
+        "output_proto_id": 1,
+        "type": 1,
+        "id": 1
+      },
+      "proto_store_configuration": {
+        "store_location": "protos"
+      }
+    },
+    "ocr_brick": {
+      "grpc": {
+        "port": 50051,
+        "host": "localhost"
+      },
+      "brick": {
+        "name": "input_brick",
+        "input_connector_type": 1,
+        "output_connector_type": 1,
+        "input_proto_id": 1,
+        "output_proto_id": 1,
+        "type": 1,
+        "id": 1
+      },
+      "proto_store_configuration": {
+        "store_location": "protos"
+      }
+    },
+    "output_brick": {
+      "grpc": {
+        "port": 50052,
+        "host": "localhost"
+      },
+      "brick": {
+        "name": "input_brick",
+        "input_connector_type": 1,
+        "output_connector_type": 1,
+        "input_proto_id": 1,
+        "output_proto_id": 1,
+        "type": 1,
+        "id": 1
+      },
+      "proto_store_configuration": {
+        "store_location": "protos"
+      }
+    }
+  }
+}

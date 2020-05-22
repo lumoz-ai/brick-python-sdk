@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "image_1.proto";
+
+message ImageClassificationResult {
+    Image image = 1;
+    string label = 2;
+    float confidence = 3;
+    float sentAt = 6;
+}
+
+message ImageClassificationResults {
+    repeated ImageClassificationResult imageClassificationResults = 1;
+    float sentAt = 6;
+}
+
+service Brick {
+    rpc process (Images) returns (ImageClassificationResults) {
+    }
+}
