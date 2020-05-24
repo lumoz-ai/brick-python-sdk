@@ -35,7 +35,7 @@ class Builder(abc.ABC):
 
 
 class Processor(abc.ABC):
-    RPC_FROM_PROTO_FILE_REGEX = r"rpc \w+\(\w+\) returns \(\w+\)"
+    RPC_FROM_PROTO_FILE_REGEX = r"rpc\w+\(\w+\)returns\(\w+\)"
     RPC_NAME_REGEX = r"rpc \w+"
     ADD_SERVICER_TO_SERVER_REGEX = r"add_\w+_to_server"
     STUB_REGEX = r"\w+Stub"
@@ -55,6 +55,10 @@ class Processor(abc.ABC):
         rpc_string = re.findall(self.RPC_NAME_REGEX, self._get_proto_file_content())[0]
         method_name = rpc_string.split(" ")[-1]
         return method_name
+
+    def get_rpc_declaration(self):
+        rpc_string = re.findall(self.RPC_FROM_PROTO_FILE_REGEX, self._get_proto_file_content().replace(" ", ""))
+        return rpc_string
 
     def _get_proto_file_content(self):
         if self.proto_file_content is None:
