@@ -13,4 +13,4 @@ grpcio-tools = "*"
 
 
 [tool.poetry.scripts]
-brick = 'bricksdk.brick_commands:brick'
+brick = 'bricksdk.brick_commands.brick:brick'
