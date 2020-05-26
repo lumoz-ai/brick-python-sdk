@@ -1,0 +1,17 @@
+[tool]
+[tool.poetry]
+name = "bricksdk"
+version = "0.1.5"
+description = "SDK to create plugable bricks in lumoz.ai"
+license = "MIT"
+authors = ["Attinad Software <attinad@attinadsoftware.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+grpcio = "*"
+grpcio-tools = "*"
+template-store ="*"
+
+
+[tool.poetry.scripts]
+brick = 'bricksdk.brick_commands.brick:brick'
