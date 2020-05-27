@@ -7,7 +7,7 @@ Python SDK for creating lumoz bricks.
 ### Installation
 
 ```bash
-$ pip install bricksdk
+$ pip install bricksdk==0.3.21
 ```
 
 ### Create Brick Project
@@ -49,15 +49,3 @@ The brick.processor.BrickProcessor().process method is invoked every time the br
 The process method in our case acts as the entry point to the brick. 
 
 Add your brick logic to the brick module in the project root.
-
-
-# Contribution Guide
-
-This project uses poetry as it's package manager. 
-
-So, go ahead and install poetry from  [https://python-poetry.org/docs/#osx-linux-bashonwindows-install-instructions][poetry]
-
-
- 
-
-[poetry]: https://python-poetry.org/docs/#osx-linux-bashonwindows-install-instructions
