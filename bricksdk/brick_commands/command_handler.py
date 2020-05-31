@@ -17,17 +17,23 @@ class BrickCommandHandler:
         template_folder = inspect.getfile(self.__class__)
         template_folder = template_folder[:template_folder.rfind("/")]
         template_folder = os.path.join(template_folder, "templates")
-        if self.command_line_arguments.command == CREATE_COMMAND:
-            create.create(brick_name=self.command_line_arguments.name,
-                          set_as_input=self.command_line_arguments.set_as_input,
-                          template_folder=template_folder,
-                          template=self.command_line_arguments.from_template
-                          )
-        if self.command_line_arguments.command == INITIALIZE_COMMAND:
-            create.initialize(brick_name=self.command_line_arguments.name,
+        try:
+            if self.command_line_arguments.command == CREATE_COMMAND:
+                create.create(brick_name=self.command_line_arguments.name,
                               set_as_input=self.command_line_arguments.set_as_input,
-                              template_folder=template_folder
+                              template_folder=template_folder,
+                              template=self.command_line_arguments.from_template
                               )
+        except:
+            raise TypeError("Creation of Brick Failed")
+        try:
+            if self.command_line_arguments.command == INITIALIZE_COMMAND:
+                create.initialize(brick_name=self.command_line_arguments.name,
+                                  set_as_input=self.command_line_arguments.set_as_input,
+                                  template_folder=template_folder
+                                  )
+        except:
+            raise TypeError("Initialisation failed")
         if self.command_line_arguments.command == PROTO_COMMAND:
             if self.command_line_arguments.download:
                 proto.download_proto()

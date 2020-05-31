@@ -23,9 +23,13 @@ def create(*, brick_name, set_as_input, template_folder, template):
 
 
 def initialize(*, brick_name, set_as_input, template_folder):
-    full_path = os.getcwd()
-    template_source_directory = get_template_directory(set_as_input, template_folder)
-    copy(source_directory=template_source_directory, destination_directory=full_path)
+    try:
+        full_path = os.getcwd()
+        template_source_directory = get_template_directory(set_as_input, template_folder)
+        copy(source_directory=template_source_directory, destination_directory=full_path)
+        return True
+    except:
+        raise TypeError("Initialization Failed")
 
 
 def get_template_directory(set_as_input, template_folder):
