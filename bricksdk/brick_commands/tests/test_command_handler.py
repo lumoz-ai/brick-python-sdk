@@ -34,14 +34,16 @@ class TestCommandHandler(unittest.TestCase):
     @patch('bricksdk.brick_commands.proto.download_proto')
     def test_with_command_proto_download(self, mock_download_proto):
         commands = self.Commands("proto", "name", True, True, False)
-        BrickCommandHandler(command_line_arguments=commands)
+        brick_command_handler=BrickCommandHandler(command_line_arguments=commands)
+        brick_command_handler.execute_commands()
         self.assertTrue(mock_download_proto.called)
         mock_download_proto.assert_called_once()
 
     @patch('bricksdk.brick_commands.proto.compile_proto')
     def test_with_command_proto_compile(self, mock_compile_proto):
         commands = self.Commands("proto", "name", False, False, True)
-        BrickCommandHandler(command_line_arguments=commands)
+        brick_command_handler = BrickCommandHandler(command_line_arguments=commands)
+        brick_command_handler.execute_commands()
         self.assertTrue(mock_compile_proto.called)
         mock_compile_proto.assert_called_once()
 
