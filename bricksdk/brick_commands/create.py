@@ -7,7 +7,7 @@ simple_template_store = SimpleTemplateStore(
     template_store_url="https://github.com/lumoz-ai/lumoz-brick-template-store/blob/develop/templates")
 
 
-def create(*, brick_name, set_as_input, template_folder, template):
+def create(*, brick_name, set_as_input, template_folder, template=None):
     current_director = os.getcwd()
     full_path = os.path.join(current_director, brick_name)
     if template:
@@ -20,7 +20,7 @@ def create(*, brick_name, set_as_input, template_folder, template):
             os.mkdir(full_path)
         template_source_directory = get_template_directory(set_as_input, template_folder)
         copy(source_directory=template_source_directory, destination_directory=full_path)
-
+    return True
 
 def initialize(*, brick_name, set_as_input, template_folder):
     try:

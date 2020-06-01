@@ -1,4 +1,5 @@
 import os
+import shutil
 import unittest
 from template_store.simple_template_store import SimpleTemplateStore
 from bricksdk.brick_commands import create
@@ -12,15 +13,14 @@ class TestCreate(unittest.TestCase):
     def test_create(self):
         test_output = create.create(brick_name="name",
                                     set_as_input=True,
-                                    template_folder="./",
-                                    template=self.command_line_arguments.from_template
+                                    template_folder="../templates"
                                     )
         self.assertTrue(test_output)
 
     def test_initialise(self):
         test_output = create.initialize(brick_name="name",
                                         set_as_input=True,
-                                        template_folder="./",
+                                        template_folder="../templates",
                                         )
         self.assertTrue(test_output)
 
@@ -33,5 +33,7 @@ class TestCreate(unittest.TestCase):
         self.assertEqual(os.path.join("./", "generic"), test_output)
 
     def test_copy(self):
-        create.copy(source_directory="./tests",destination_directory= None)
-        self.assertTrue(os.path.exists("./tests"))
+        print(os.getcwd())
+        create.copy(source_directory=".",destination_directory="../test_folder")
+        self.assertTrue(os.path.exists("../test_folder"))
+        shutil.rmtree("../test_folder")

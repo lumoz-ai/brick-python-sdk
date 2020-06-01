@@ -25,7 +25,7 @@ class BrickCommandHandler:
                               template=self.command_line_arguments.from_template
                               )
         except:
-            raise TypeError("Creation of Brick Failed")
+            raise Exception("Creation of Brick Failed")
         try:
             if self.command_line_arguments.command == INITIALIZE_COMMAND:
                 create.initialize(brick_name=self.command_line_arguments.name,
@@ -33,9 +33,13 @@ class BrickCommandHandler:
                                   template_folder=template_folder
                                   )
         except:
-            raise TypeError("Initialisation failed")
-        if self.command_line_arguments.command == PROTO_COMMAND:
-            if self.command_line_arguments.download:
-                proto.download_proto()
-            if self.command_line_arguments.compile:
-                proto.compile_proto()
+            raise Exception("Initialisation failed")
+        try:
+            if self.command_line_arguments.command == PROTO_COMMAND:
+                if self.command_line_arguments.download:
+                    proto.download_proto()
+                if self.command_line_arguments.compile:
+                    proto.compile_proto()
+        except:
+            raise Exception("Proto failed")
+        return True

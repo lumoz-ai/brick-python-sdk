@@ -1,10 +1,10 @@
+import os
+import shutil
 import unittest
 from bricksdk.brick_commands.command_handler import BrickCommandHandler
-from bricksdk.brick_commands import proto
 from unittest.mock import patch
 
-import sys
-print(sys.modules[__name__])
+
 class TestCommandHandler(unittest.TestCase):
     class Commands:
         def __init__(self, command, name, download, set_as_input, compile):
@@ -13,23 +13,25 @@ class TestCommandHandler(unittest.TestCase):
             self.download = download
             self.set_as_input = set_as_input
             self.compile = compile
+            self.from_template = None
 
     def test_with_all_arguments_none(self):
         commands = self.Commands(None, None, None, None, None)
         brick_command_handler = BrickCommandHandler(command_line_arguments=commands)
-        test_output = brick_command_handler.execute_commands()
-        self.assertEqual(None, test_output)
+        brick_command_handler.execute_commands()
+        self.assertRaises(Exception)
 
     def test_with_command_create(self):
-        commands = self.Commands("create", "name", True, True, None)
+        commands = self.Commands("create", "name", True, True, True)
         brick_command_handler = BrickCommandHandler(command_line_arguments=commands)
-        self.assertRaises(TypeError, brick_command_handler.execute_commands)
+        test_output = brick_command_handler.execute_commands()
+        self.assertTrue(test_output)
 
     def test_with_command_initialize(self):
         commands = self.Commands("initialize", "name", True, True, None)
         brick_command_handler = BrickCommandHandler(command_line_arguments=commands)
         test_output = brick_command_handler.execute_commands()
-        self.assertEqual(None, test_output)
+        self.assertTrue(test_output)
 
     @patch('bricksdk.brick_commands.proto.download_proto')
     def test_with_command_proto_download(self, mock_download_proto):
@@ -50,24 +52,24 @@ class TestCommandHandler(unittest.TestCase):
     def test_with_name_none(self):
         commands = self.Commands("create", None, True, True, None)
         brick_command_handler = BrickCommandHandler(command_line_arguments=commands)
-        self.assertRaises(TypeError, brick_command_handler.execute_commands)
+        self.assertRaises(Exception, brick_command_handler.execute_commands)
 
     def test_with_download_none(self):
-        commands = self.Commands("create", "name", None, True, None)
+        commands = self.Commands("proto", "name", None, True, None)
         brick_command_handler = BrickCommandHandler(command_line_arguments=commands)
-        self.assertRaises(TypeError, brick_command_handler.execute_commands)
+        self.assertTrue(brick_command_handler.execute_commands)
 
     def test_with_compile_none(self):
-        commands = self.Commands("create", "name", True, True, None)
+        commands = self.Commands("proto", "name", True, True, None)
         brick_command_handler = BrickCommandHandler(command_line_arguments=commands)
-        self.assertRaises(TypeError, brick_command_handler.execute_commands)
+        self.assertTrue(brick_command_handler.execute_commands)
 
     def test_with_set_as_input_none(self):
-        commands = self.Commands("create", "name", True, None, None)
+        commands = self.Commands("create", "name", True, None, True)
         brick_command_handler = BrickCommandHandler(command_line_arguments=commands)
-        self.assertRaises(TypeError, brick_command_handler.execute_commands)
+        self.assertTrue(brick_command_handler.execute_commands)
 
     def test_with_proper_command_arguments(self):
-        commands = self.Commands("create", "name", True, True, None)
+        commands = self.Commands("create", "name", True, False, True)
         brick_command_handler = BrickCommandHandler(command_line_arguments=commands)
-        pass
+        self.assertTrue(brick_command_handler.execute_commands())
