@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+import "image_1.proto";
+import "image_detection_3.proto";
+
+service Caster {
+    rpc cast (ImageDetectionResults) returns (Images) {
+    }
+}
